@@ -1,0 +1,26 @@
+[
+  {
+    "id": 7,
+    "topic": "Graphs",
+    "difficulty": "advanced",
+    "question": "Which algorithm finds shortest paths from a source?",
+    "options": ["DFS", "BFS", "Dijkstra", "Prim"],
+    "correct_option": "2"
+  },
+  {
+    "id": 8,
+    "topic": "Dynamic Programming",
+    "difficulty": "advanced",
+    "question": "DP is mainly used to optimize what?",
+    "options": ["Sorting", "Recursion with overlap", "Greedy", "Backtracking"],
+    "correct_option": "1"
+  },
+  {
+    "id": 9,
+    "topic": "Complexity",
+    "difficulty": "advanced",
+    "question": "Which is fastest?",
+    "options": ["O(n)", "O(n log n)", "O(log n)", "O(n^2)"],
+    "correct_option": "2"
+  }
+]

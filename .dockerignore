@@ -1,0 +1,34 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local database / SQLite
+*.db
+
+# Tests / temp files
+tests/
+*.tmp
+
+# Git files
+.git
+.gitignore
+
+# Docker specific
+docker-compose.override.yml

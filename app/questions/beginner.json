@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "topic": "Time Complexity",
+    "difficulty": "beginner",
+    "question": "What is the time complexity of a loop that runs n times?",
+    "options": ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+    "correct_option": "1"
+  },
+  {
+    "id": 2,
+    "topic": "Arrays",
+    "difficulty": "beginner",
+    "question": "What is the index of the first element in an array?",
+    "options": ["1", "0", "-1", "Depends"],
+    "correct_option": "1"
+  },
+  {
+    "id": 3,
+    "topic": "Conditions",
+    "difficulty": "beginner",
+    "question": "Which keyword is used for conditional branching?",
+    "options": ["for", "while", "if", "def"],
+    "correct_option": "2"
+  }
+]

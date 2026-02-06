@@ -1,0 +1,26 @@
+[
+  {
+    "id": 4,
+    "topic": "Sorting",
+    "difficulty": "intermediate",
+    "question": "Which sorting algorithm is stable?",
+    "options": ["Quick Sort", "Heap Sort", "Merge Sort", "Selection Sort"],
+    "correct_option": "2"
+  },
+  {
+    "id": 5,
+    "topic": "Hash Map",
+    "difficulty": "intermediate",
+    "question": "Average lookup time in a hash map?",
+    "options": ["O(n)", "O(log n)", "O(1)", "O(n log n)"],
+    "correct_option": "2"
+  },
+  {
+    "id": 6,
+    "topic": "Recursion",
+    "difficulty": "intermediate",
+    "question": "What causes stack overflow?",
+    "options": ["Too many loops", "No base case", "Large array", "Slow CPU"],
+    "correct_option": "1"
+  }
+]
