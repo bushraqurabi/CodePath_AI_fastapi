@@ -1,0 +1,630 @@
+{
+  "info": {
+    "_postman_id": "323a5ec2-0a03-4781-9d50-d018eb50f1a5",
+    "name": "CodePath FastAPI - AI Services",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51774391"
+  },
+  "item": [
+    {
+      "name": "Quiz",
+      "item": [
+        {
+          "name": "GET /quiz/start",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Body is a non-empty array\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.be.an(\"array\").that.is.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/quiz/start?limit=5",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "quiz",
+                "start"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Returns a random set of quiz questions with options."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /quiz/submit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has accuracy + level\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"accuracy\");",
+                  "  pm.expect(body).to.have.property(\"level\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    { \"question_id\": 1, \"selected_option\": 2 },\n    { \"question_id\": 2, \"selected_option\": 0 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/quiz/submit",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "quiz",
+                "submit"
+              ]
+            },
+            "description": "Validates answers, returns accuracy, topic breakdown, level and an AI-style insight."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard (Codeforces)",
+      "item": [
+        {
+          "name": "GET /dashboard/user/:handle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200 or 404\", () => { pm.expect(pm.response.code).to.be.oneOf([200, 404]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test(\"User payload has rating + tier\", () => {",
+                  "    const body = pm.response.json().data;",
+                  "    pm.expect(body).to.have.property(\"handle\");",
+                  "    pm.expect(body).to.have.property(\"rating\");",
+                  "    pm.expect(body).to.have.property(\"tier\");",
+                  "  });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/dashboard/user/{{cfHandle}}",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "user",
+                "{{cfHandle}}"
+              ]
+            },
+            "description": "User rating, tier, rank from Codeforces. Returns 404 when the handle does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /dashboard/radar/:handle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has top_topics\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"top_topics\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/dashboard/radar/{{cfHandle}}",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "radar",
+                "{{cfHandle}}"
+              ]
+            },
+            "description": "Top 6 topic strengths as a radar-style map."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /dashboard/ai/:handle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has ai_insight\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"ai_insight\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/dashboard/ai/{{cfHandle}}",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "ai",
+                "{{cfHandle}}"
+              ]
+            },
+            "description": "AI-generated insight. Falls back to a deterministic message when Gemini is unreachable."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Topic Intelligence",
+      "item": [
+        {
+          "name": "GET /topic/:topic_name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200 or 404\", () => { pm.expect(pm.response.code).to.be.oneOf([200, 404]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test(\"Topic payload is complete\", () => {",
+                  "    const body = pm.response.json().data;",
+                  "    pm.expect(body).to.have.property(\"topic\");",
+                  "    pm.expect(body).to.have.property(\"accuracy\");",
+                  "    pm.expect(body).to.have.property(\"level\");",
+                  "  });",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/topic/:topic_name?user_handle={{cfHandle}}",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "topic",
+                ":topic_name"
+              ],
+              "query": [
+                {
+                  "key": "user_handle",
+                  "value": "{{cfHandle}}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "topic_name",
+                  "value": "Arrays"
+                }
+              ]
+            },
+            "description": "Accuracy and level for a topic based on Codeforces submissions. Unknown topics return 404."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /topic/:topic_name/ai-summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has performance + ai_insights\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"performance\");",
+                  "  pm.expect(body).to.have.property(\"ai_insights\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/topic/:topic_name/ai-summary?user_handle={{cfHandle}}",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "topic",
+                ":topic_name",
+                "ai-summary"
+              ],
+              "query": [
+                {
+                  "key": "user_handle",
+                  "value": "{{cfHandle}}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "topic_name",
+                  "value": "Dynamic Programming"
+                }
+              ]
+            },
+            "description": "Per-subskill performance + Gemini insights for a topic."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chatbot",
+      "item": [
+        {
+          "name": "POST /api/chat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has reply\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"reply\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I get better at dynamic programming?\"\n}"
+            },
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/api/chat",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat"
+              ]
+            },
+            "description": "Sends a competitive programming question to Gemini and returns a reply."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Roadmap",
+      "item": [
+        {
+          "name": "POST /api/roadmap/generate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has modules\", () => {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.expect(data).to.have.property(\"modules\");",
+                  "  pm.expect(data.modules).to.be.an(\"array\");",
+                  "});",
+                  "pm.test(\"Each module has practiceProblems\", () => {",
+                  "  const modules = pm.response.json().data.modules;",
+                  "  modules.forEach(m => {",
+                  "    pm.expect(m).to.have.property(\"practiceProblems\");",
+                  "    pm.expect(m.practiceProblems).to.be.an(\"array\");",
+                  "  });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"u1\",\n  \"topics\": [\n    { \"id\": 1, \"title\": \"Arrays\" },\n    { \"id\": 2, \"title\": \"Strings\" },\n    { \"id\": 3, \"title\": \"Dynamic Programming\" },\n    { \"id\": 4, \"title\": \"Greedy\" }\n  ],\n  \"skillAssessments\": [],\n  \"quizPerformance\": [],\n  \"codeforcesStats\": {\n    \"rating\": 1400,\n    \"tier\": \"Intermediate\",\n    \"problemsSolved\": 120,\n    \"accuracy\": 62,\n    \"topicBreakdown\": []\n  }\n}"
+            },
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/api/roadmap/generate",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "roadmap",
+                "generate"
+              ]
+            },
+            "description": "Returns weakness-ranked roadmap modules with practice problems."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contest",
+      "item": [
+        {
+          "name": "POST /api/contest/select-problems",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has criteria + totalProblems + problems\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"criteria\");",
+                  "  pm.expect(body).to.have.property(\"totalProblems\");",
+                  "  pm.expect(body).to.have.property(\"problems\");",
+                  "  pm.expect(body.problems).to.be.an(\"array\").with.lengthOf(12);",
+                  "});",
+                  "pm.test(\"Contest has timing\", () => {",
+                  "  const body = pm.response.json().data;",
+                  "  pm.expect(body).to.have.property(\"contestTiming\");",
+                  "  pm.expect(body.contestTiming).to.have.property(\"startTime\");",
+                  "  pm.expect(body.contestTiming).to.have.property(\"endTime\");",
+                  "});",
+                  "pm.test(\"Each problem has name, rating, tags, link\", () => {",
+                  "  const problems = pm.response.json().data.problems;",
+                  "  problems.forEach(p => {",
+                  "    pm.expect(p).to.have.property(\"name\");",
+                  "    pm.expect(p).to.have.property(\"rating\");",
+                  "    pm.expect(p).to.have.property(\"tags\");",
+                  "    pm.expect(p).to.have.property(\"link\");",
+                  "    pm.expect(p).to.have.property(\"difficultyTier\");",
+                  "  });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"u1\",\n  \"targetSkillTier\": \"Intermediate\",\n  \"topics\": [\n    { \"id\": 1, \"title\": \"Arrays\" },\n    { \"id\": 2, \"title\": \"Strings\" },\n    { \"id\": 3, \"title\": \"Greedy\" }\n  ],\n  \"quizPerformance\": [\n    { \"topic\": \"Arrays\", \"attempts\": 10, \"solved\": 4 },\n    { \"topic\": \"Strings\", \"attempts\": 8, \"solved\": 5 }\n  ],\n  \"totalProblems\": 12\n}"
+            },
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/api/contest/select-problems",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "contest",
+                "select-problems"
+              ]
+            },
+            "description": "Virtual contest: 12 real Codeforces problems with start/end times."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reference",
+      "item": [
+        {
+          "name": "POST /api/reference/curate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Standard envelope {success, message, data}\", () => {",
+                  "  pm.response.to.be.json;",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j).to.have.property(\"success\").that.is.a(\"boolean\");",
+                  "  pm.expect(j).to.have.property(\"message\").that.is.a(\"string\");",
+                  "  pm.expect(j).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Response has sections\", () => {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.expect(data).to.have.property(\"sections\");",
+                  "  pm.expect(data.sections).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"u1\",\n  \"snippets\": [\n    { \"id\": \"a1\", \"title\": \"Two Pointer Pattern\", \"topicId\": 1, \"topicTitle\": \"Arrays\", \"language\": \"cpp\", \"notesPreview\": \"for sorted-array two-sum\" },\n    { \"id\": \"a2\", \"title\": \"Sliding Window\", \"topicId\": 1, \"topicTitle\": \"Arrays\", \"language\": \"cpp\" },\n    { \"id\": \"b1\", \"title\": \"KMP\", \"topicId\": 2, \"topicTitle\": \"Strings\", \"language\": \"cpp\" }\n  ],\n  \"quizPerformance\": [],\n  \"codeforcesStats\": null\n}"
+            },
+            "url": {
+              "raw": "{{fastApiBaseUrl}}/api/reference/curate",
+              "host": [
+                "{{fastApiBaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reference",
+                "curate"
+              ]
+            },
+            "description": "Groups snippets into a weakness-ordered study sheet with per-topic intros."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "fastApiBaseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "cfHandle",
+      "value": "tourist"
+    }
+  ]
+}

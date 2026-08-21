@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.core.response import StandardResponse, ok
 from app.schemas.topic.topic_response import TopicResponse
 from app.schemas.topic.topic_ai_summary import TopicAISummaryResponse
 from app.services.topic.codeforces_service import get_user_submissions, filter_problems_by_topic
@@ -66,10 +67,9 @@ def match_topic(input_name: str, topic_dict: dict):
             return key
     return None
 
-# ================== Topic Overview ==================
-@router.get("/{topic_name}", response_model=TopicResponse)
-async def get_topic_overview(topic_name: str, user_handle: str):
-    matched_topic = match_topic(topic_name, TOPIC_TAGS)
+# ================== Shared builders ==================
+async def _build_topic_overview(topic_input: str, user_handle: str):
+    matched_topic = match_topic(topic_input, TOPIC_TAGS)
     if not matched_topic:
         raise HTTPException(status_code=404, detail="Unknown topic")
 
@@ -84,18 +84,19 @@ async def get_topic_overview(topic_name: str, user_handle: str):
     accuracy = compute_accuracy(accepted, total)
     level = classify_level(accuracy)
 
-    return TopicResponse(
-        topic=matched_topic,
-        accuracy=accuracy,
-        level=level,
-        accepted=accepted,
-        wrong=wrong
+    return ok(
+        TopicResponse(
+            topic=matched_topic,
+            accuracy=accuracy,
+            level=level,
+            accepted=accepted,
+            wrong=wrong
+        )
     )
 
-# ================== Topic AI Summary ==================
-@router.get("/{topic_name}/ai-summary", response_model=TopicAISummaryResponse)
-async def topic_ai_summary(topic_name: str, user_handle: str):
-    matched_topic = match_topic(topic_name, TOPIC_SUBSKILLS)
+
+async def _build_topic_ai_summary(topic_input: str, user_handle: str):
+    matched_topic = match_topic(topic_input, TOPIC_SUBSKILLS)
     if not matched_topic:
         raise HTTPException(status_code=404, detail="AI analysis not available for this topic")
 
@@ -104,8 +105,32 @@ async def topic_ai_summary(topic_name: str, user_handle: str):
     performance = compute_subskill_performance(submissions=submissions, subskill_tags=subskills)
     ai_insights = await get_ai_insights(matched_topic, performance)
 
-    return TopicAISummaryResponse(
-        topic=matched_topic,
-        performance=performance,
-        ai_insights=ai_insights
+    return ok(
+        TopicAISummaryResponse(
+            topic=matched_topic,
+            performance=performance,
+            ai_insights=ai_insights
+        )
     )
+
+# ================== Query-param style (Postman-friendly) ==================
+# GET /topic/?topic=Arrays&user_handle={{handle}}
+@router.get("", response_model=StandardResponse)
+@router.get("/", response_model=StandardResponse)
+async def get_topic_overview_query(topic: str, user_handle: str):
+    return await _build_topic_overview(topic, user_handle)
+
+# GET /topic/ai-summary?topic=Dynamic%20Programming&user_handle={{handle}}
+# NOTE: registered before /{topic_name} so "ai-summary" is never captured as a topic name.
+@router.get("/ai-summary", response_model=StandardResponse)
+async def topic_ai_summary_query(topic: str, user_handle: str):
+    return await _build_topic_ai_summary(topic, user_handle)
+
+# ================== Path-param style (legacy, used by Express proxy) ==================
+@router.get("/{topic_name}", response_model=StandardResponse)
+async def get_topic_overview(topic_name: str, user_handle: str):
+    return await _build_topic_overview(topic_name, user_handle)
+
+@router.get("/{topic_name}/ai-summary", response_model=StandardResponse)
+async def topic_ai_summary(topic_name: str, user_handle: str):
+    return await _build_topic_ai_summary(topic_name, user_handle)

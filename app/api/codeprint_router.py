@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
+from app.core.response import StandardResponse, ok
 from app.services.codeprint import (
     codeforces_service,
     tier_service,
@@ -17,7 +18,7 @@ from app.schemas.codeprint.dashboard import (
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
 
-@router.get("/user/{handle}", response_model=UserDashboard)
+@router.get("/user/{handle}", response_model=StandardResponse)
 def get_user_info(handle: str):
     """
     Returns user info + tier for a given Codeforces handle.
@@ -28,17 +29,17 @@ def get_user_info(handle: str):
 
     tier = tier_service.get_user_tier(user["rating"])
 
-    return {
+    return ok({
         "handle": user["handle"],
         "rating": user["rating"],
         "tier": tier,
         "rank": user["rank"],
         "maxRating": user["maxRating"],
         "maxRank": user["maxRank"],
-    }
+    })
 
 
-@router.get("/radar/{handle}", response_model=RadarResponse)
+@router.get("/radar/{handle}", response_model=StandardResponse)
 def get_radar_chart(handle: str):
     """
     Returns top 6 topic strengths for the user.
@@ -55,13 +56,13 @@ def get_radar_chart(handle: str):
         sorted(topic_scores.items(), key=lambda x: x[1], reverse=True)[:6]
     )
 
-    return {
+    return ok({
         "handle": handle,
         "top_topics": top_topics,
-    }
+    })
 
 
-@router.get("/ai/{handle}", response_model=AIInsightResponse)
+@router.get("/ai/{handle}", response_model=StandardResponse)
 def get_ai_insight(handle: str):
     """
     Returns AI insights for the user.
@@ -72,7 +73,7 @@ def get_ai_insight(handle: str):
 
     message = gemini_service.generate_message(signals)
 
-    return {
+    return ok({
         "handle": handle,
         "ai_insight": message,
-    }
+    })
